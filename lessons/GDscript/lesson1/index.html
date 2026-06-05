@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dubious Code Lab | GDScript Level 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050508;
+            --panel: #0d0d12;
+            --border: #1e1e2e;
+            --text: #ffffff;
+            --dim: #777799;
+            --neon-blue: #00d2ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff3333;
+            --dyslexia-font: 'Space Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--dyslexia-font);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Header */
+        header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-weight: bold; color: var(--neon-blue); letter-spacing: 2px; }
+        .progress-badge { background: rgba(57, 255, 20, 0.1); color: var(--neon-green); padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; }
+
+        /* Main Workspace Splitting Screen */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Side: Lesson Content */
+        .lesson-panel {
+            width: 50%;
+            padding: 2rem;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+
+        h2 { color: var(--neon-blue); margin-bottom: 1rem; }
+        p { color: #ccc; margin-bottom: 1.5rem; line-height: 1.6; font-size: 0.95rem; }
+        
+        .code-block {
+            background: #000;
+            border-left: 4px solid var(--neon-blue);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            color: #a6e22e; /* Classic code color */
+        }
+
+        /* Right Side: Interactive Console */
+        .console-panel {
+            width: 50%;
+            padding: 2rem;
+            background: #020204;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .console-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            flex: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title { color: var(--dim); font-size: 0.8rem; letter-spacing: 1px; margin-bottom: 1rem; text-transform: uppercase; }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #12121a;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 1rem;
+            text-align: left;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--dyslexia-font);
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .option-btn:hover { border-color: var(--neon-blue); background: #161622; }
+
+        /* Feedback Terminal output */
+        .terminal {
+            background: #000;
+            border-radius: 6px;
+            padding: 1rem;
+            min-height: 80px;
+            font-size: 0.85rem;
+            color: var(--dim);
+            border-top: 2px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">DUBIOUS_LAB // GDSCRIPT</div>
+    <div class="progress-badge">LVL_01: VARIABLES</div>
+</header>
+
+<div class="workspace">
+    <div class="lesson-panel">
+        <h2>Static Typing in Godot 4</h2>
+        <p>In GDScript, you can force a variable to lock down to a specific data type using a colon (<code>:</code>). This prevents you from making game-breaking mistakes later on.</p>
+        
+        <p>Look at this correct setup where variables match their box types perfectly:</p>
+        
+        <div class="code-block">
+var player_name : String = "Killswitch"<br>
+var items_count : int = 15<br>
+var game_running : bool = true
+        </div>
+
+        <p>If you tell Godot a box is an <code>int</code> (whole number), it will instantly crash if you try to put a <code>String</code> (text wrapped in quotes) inside it.</p>
+    </div>
+
+    <div class="console-panel">
+        <div class="console-box">
+            <div class="quiz-title">Target Script (Analyze Line 5 Error):</div>
+            <div class="code-block" style="border-color: var(--neon-red); background: #080202;">
+1 | extends Node<br>
+2 | <br>
+3 | var inventory_slots : int = 10<br>
+4 | <br>
+5 | func _ready():<br>
+6 | &nbsp;&nbsp;&nbsp;&nbsp;inventory_slots = "An Old Key"
+            </div>
+            
+            <p style="font-size: 0.85rem; margin-bottom: 1rem; color: var(--dim);">What will the compiler output when it attempts to load Line 6?</p>
+            
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer(false, 'SYSTEM: Code compiled without errors. (Incorrect: You forced slots to be an int, you can\'t put text here!)')">
+                    A) It works perfectly fine because variables change on the fly.
+                </button>
+                <button class="option-btn" onclick="checkAnswer(true, 'CRITICAL ERROR: Value of type \'String\' cannot be assigned to a variable of type \'int\'. Compilation FAILED.')">
+                    B) ERROR: Trying to put a Text String inside an Integer box.
+                </button>
+                <button class="option-btn" onclick="checkAnswer(false, 'SYSTEM ERROR: Unknown syntax on line 1. (Incorrect: \'extends Node\' is perfectly valid!)')">
+                    C) ERROR: The line \'extends Node\' is broken.
+                </button>
+            </div>
+        </div>
+
+        <div class="terminal" id="term-out">
+            [TERMINAL OUT]: Awaiting compiler compilation request... Select an option to execute code.
+        </div>
+    </div>
+</div>
+
+<script>
+    function checkAnswer(isCorrect, message) {
+        const terminal = document.getElementById('term-out');
+        if(isCorrect) {
+            terminal.style.color = "var(--neon-green)";
+            terminal.style.borderTopColor = "var(--neon-green)";
+            terminal.innerHTML = "[SUCCESS] " + message + "<br><br><strong>🎉 LEVEL CLEARED! You mastered static typing basics. Ready for functions.</strong>";
+        } else {
+            terminal.style.color = "var(--neon-red)";
+            terminal.style.borderTopColor = "var(--neon-red)";
+            terminal.innerHTML = "[COMPILE CRASH] " + message;
+        }
+    }
+</script>
+
+</body>
+</html>
